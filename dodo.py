@@ -8,8 +8,6 @@
 import random
 import subprocess
 
-import pelican_precompress
-
 DOIT_CONFIG = {'default_tasks': ['build', 'test']}
 
 
@@ -50,7 +48,7 @@ def task_test_release():
     """Upload to test.pypi.org."""
 
     name_suffix = ''.join(chr(i) for i in random.sample(range(0x61, 0x61+26), 10))
-    version_suffix = str(random.choice(range(1,1000)))
+    version_suffix = str(random.choice(range(1, 1000)))
 
     return {
         'actions': [

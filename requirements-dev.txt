@@ -13,3 +13,4 @@ docutils
 doit
 tox
 twine
+wheel

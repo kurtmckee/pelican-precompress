@@ -8,23 +8,25 @@ Changelog
 Unreleased changes
 ==================
 
+
+
+1.1.2 - 2021-02-11
+==================
+
 *   Prevent small files from terminating the file compression loop. (#5)
+*   Officially support Python 3.9.
 
 
 
-1.1.1
-=====
-
-*Released 13 July 2020*
+1.1.1 - 2020-07-13
+==================
 
 *   Fix a bytes/str oversight in the release process.
 
 
 
-1.1.0
-=====
-
-*Released 13 July 2020*
+1.1.0 - 2020-07-13
+==================
 
 *   Compress files in parallel on multi-core CPU's.
 *   Add a ``PRECOMPRESS_MIN_SIZE`` option to skip files that are too small.
@@ -37,10 +39,8 @@ Unreleased changes
 
 
 
-1.0.0
-=====
-
-*Released 5 February 2020*
+1.0.0 - 2020-02-05
+==================
 
 *   Initial release
 *   Support brotli, zopfli, and gzip static compression.
