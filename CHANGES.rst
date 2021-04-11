@@ -8,6 +8,8 @@ Changelog
 Unreleased changes
 ==================
 
+*   Migrate to the namespace plugin architecture introduced in Pelican 4.5.
+
 
 
 1.1.2 - 2021-02-11

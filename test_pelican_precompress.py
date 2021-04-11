@@ -9,7 +9,7 @@ from unittest.mock import patch, Mock
 
 import pytest
 
-import pelican_precompress as pp
+import pelican.plugins.precompress as pp
 
 
 @pytest.mark.parametrize(
@@ -26,7 +26,7 @@ def test_get_settings_compression_support(installed_modules, expected_settings):
     instance.settings = {'OUTPUT_PATH': ''}
 
     patches = [
-        patch(f'pelican_precompress.{module}', module in installed_modules)
+        patch(f'pelican.plugins.precompress.{module}', module in installed_modules)
         for module in {'brotli', 'zopfli'}
     ]
     [patch_.start() for patch_ in patches]
@@ -52,9 +52,9 @@ def test_get_settings_compression_validation():
 
     log = Mock()
     patches = [
-        patch('pelican_precompress.brotli', None),
-        patch('pelican_precompress.zopfli', None),
-        patch('pelican_precompress.log', log)
+        patch('pelican.plugins.precompress.brotli', None),
+        patch('pelican.plugins.precompress.zopfli', None),
+        patch('pelican.plugins.precompress.log', log)
     ]
     [patch_.start() for patch_ in patches]
 
@@ -89,7 +89,7 @@ def test_get_settings_extensions_validation(extensions):
 
     log = Mock()
     patches = [
-        patch('pelican_precompress.log', log)
+        patch('pelican.plugins.precompress.log', log)
     ]
     [patch_.start() for patch_ in patches]
 
@@ -135,7 +135,7 @@ def test_compress_with_gzip_exception():
 
 
 def test_register():
-    with patch('pelican_precompress.pelican', Mock()) as pelican:
+    with patch('pelican.plugins.precompress.pelican', Mock()) as pelican:
         pp.register()
     pelican.signals.finalized.connect.assert_called_once_with(pp.compress_files)
 
@@ -165,7 +165,7 @@ multiprocessing_mock.Pool.return_value = multiprocessing_mock
 multiprocessing_mock.apply_async = apply_async_mock
 
 
-@patch('pelican_precompress.multiprocessing', multiprocessing_mock)
+@patch('pelican.plugins.precompress.multiprocessing', multiprocessing_mock)
 def test_compress_files_do_nothing(fs):
     """If all compressors are disabled, no compressed files should be written."""
     fs.create_file('/test.txt')
@@ -181,7 +181,7 @@ def test_compress_files_do_nothing(fs):
     assert not pathlib.Path('/test.txt.gz').exists()
 
 
-@patch('pelican_precompress.multiprocessing', multiprocessing_mock)
+@patch('pelican.plugins.precompress.multiprocessing', multiprocessing_mock)
 def test_compress_files_never_overwrite(fs):
     with open('/test.txt', 'wb') as file:
         file.write(b'a' * 100)
@@ -193,14 +193,14 @@ def test_compress_files_never_overwrite(fs):
         'PRECOMPRESS_GZIP': True,
         'PRECOMPRESS_ZOPFLI': False,
     }
-    with patch('pelican_precompress.log', Mock()) as log:
+    with patch('pelican.plugins.precompress.log', Mock()) as log:
         pp.compress_files(instance)
     log.info.assert_called_once()
     assert pathlib.Path('/test.txt.gz').exists()
     assert pathlib.Path('/test.txt.gz').stat().st_size == 0
 
 
-@patch('pelican_precompress.multiprocessing', multiprocessing_mock)
+@patch('pelican.plugins.precompress.multiprocessing', multiprocessing_mock)
 def test_compress_files_skip_existing_matching_files(fs):
     with open('/test.txt', 'wb') as file:
         file.write(b'abc' * 1000)
@@ -216,7 +216,7 @@ def test_compress_files_skip_existing_matching_files(fs):
         'PRECOMPRESS_ZOPFLI': False,
         'PRECOMPRESS_OVERWRITE': True,
     }
-    with patch('pelican_precompress.log', Mock()) as log:
+    with patch('pelican.plugins.precompress.log', Mock()) as log:
         pp.compress_files(instance)
     log.info.assert_called_once()
     with destination.open('rb') as file:
@@ -224,7 +224,7 @@ def test_compress_files_skip_existing_matching_files(fs):
     assert destination.stat().st_size == destination_size
 
 
-@patch('pelican_precompress.multiprocessing', multiprocessing_mock)
+@patch('pelican.plugins.precompress.multiprocessing', multiprocessing_mock)
 def test_compress_files_overwrite_br(fs):
     brotli = pytest.importorskip('brotli')
     with open('/test.txt', 'wb') as file:
@@ -239,14 +239,14 @@ def test_compress_files_overwrite_br(fs):
         'PRECOMPRESS_GZIP': False,
         'PRECOMPRESS_ZOPFLI': False,
     }
-    with patch('pelican_precompress.log', Mock()) as log:
+    with patch('pelican.plugins.precompress.log', Mock()) as log:
         pp.compress_files(instance)
     log.warning.assert_called_once()
     with pathlib.Path('/test.txt.br').open('rb') as file:
         assert brotli.decompress(file.read()) == b'a' * 100
 
 
-@patch('pelican_precompress.multiprocessing', multiprocessing_mock)
+@patch('pelican.plugins.precompress.multiprocessing', multiprocessing_mock)
 def test_compress_files_overwrite_gz(fs):
     with open('/test.txt', 'wb') as file:
         file.write(b'a' * 100)
@@ -260,14 +260,14 @@ def test_compress_files_overwrite_gz(fs):
         'PRECOMPRESS_GZIP': True,
         'PRECOMPRESS_ZOPFLI': False,
     }
-    with patch('pelican_precompress.log', Mock()) as log:
+    with patch('pelican.plugins.precompress.log', Mock()) as log:
         pp.compress_files(instance)
     log.warning.assert_called_once()
     with pathlib.Path('/test.txt.gz').open('rb') as file:
         assert gzip.decompress(file.read()) == b'a' * 100
 
 
-@patch('pelican_precompress.multiprocessing', multiprocessing_mock)
+@patch('pelican.plugins.precompress.multiprocessing', multiprocessing_mock)
 def test_compress_files_file_size_increase(fs):
     with open('/test.txt', 'wb') as file:
         file.write(b'a' * 2)
@@ -279,13 +279,13 @@ def test_compress_files_file_size_increase(fs):
         'PRECOMPRESS_ZOPFLI': False,
         'PRECOMPRESS_MIN_SIZE': 1,
     }
-    with patch('pelican_precompress.log', Mock()) as log:
+    with patch('pelican.plugins.precompress.log', Mock()) as log:
         pp.compress_files(instance)
     log.info.assert_called_once()
     assert not pathlib.Path('/test.txt.gz').exists()
 
 
-@patch('pelican_precompress.multiprocessing', multiprocessing_mock)
+@patch('pelican.plugins.precompress.multiprocessing', multiprocessing_mock)
 def test_compress_files_continue_on_small_files(fs):
     """Verify that small files do not cause an early exit.
 
@@ -304,13 +304,13 @@ def test_compress_files_continue_on_small_files(fs):
         'PRECOMPRESS_ZOPFLI': False,
         'PRECOMPRESS_MIN_SIZE': 100,
     }
-    with patch('pelican_precompress.log', Mock()) as log:
+    with patch('pelican.plugins.precompress.log', Mock()) as log:
         pp.compress_files(instance)
     log.info.assert_called_once()
     assert pathlib.Path('/999-must-compress.txt.gz').exists()
 
 
-@patch('pelican_precompress.multiprocessing', multiprocessing_mock)
+@patch('pelican.plugins.precompress.multiprocessing', multiprocessing_mock)
 def test_compress_files_overwrite_erase_existing_file(fs):
     """Ensure existing files are erased if the file size would increase."""
     with open('/test.txt', 'wb') as file:
@@ -326,13 +326,13 @@ def test_compress_files_overwrite_erase_existing_file(fs):
         'PRECOMPRESS_OVERWRITE': True,
         'PRECOMPRESS_MIN_SIZE': 1,
     }
-    with patch('pelican_precompress.log', Mock()) as log:
+    with patch('pelican.plugins.precompress.log', Mock()) as log:
         pp.compress_files(instance)
     log.info.assert_called_once()
     assert not pathlib.Path('/test.txt.gz').exists()
 
 
-@patch('pelican_precompress.multiprocessing', multiprocessing_mock)
+@patch('pelican.plugins.precompress.multiprocessing', multiprocessing_mock)
 def test_compress_files_success_all_algorithms(fs):
     pytest.importorskip('brotli')
     pytest.importorskip('zopfli')
