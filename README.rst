@@ -48,17 +48,27 @@ Further reading: `zopfli`_, `brotli`_
 2. Configure Pelican
 --------------------
 
-You'll need to import the plugin and add it to the list of active plugins.
+If you're using Pelican 4.5 or higher then you might not need to configure anything.
+pelican_precompress supports Pelican's namespace plugin architecture
+and will be automatically detected and loaded when Pelican runs.
+
+However, if you're maintaining a list of plugins for Pelican to use (even in Pelican 4.5)
+then you'll need to add it to the list of active plugins.
+
 Feel free to copy and paste the code below into your Pelican configuration file.
 Just uncomment and edit the configuration lines to your liking...or leave
 them alone because the defaults are awesome!
 
 ..  code-block:: python3
 
-    import pelican_precompress
+    # Pelican 4.5 introduced automatic plugin discovery and loading.
+    # You only need to add pelican_precompress to your PLUGINS list
+    # if your configuration file already has a PLUGINS list!
+    #
+    # PLUGINS = ['pelican.plugins.precompress']
 
-    PLUGINS = [pelican_precompress]
-
+    # These options can be customized as desired.
+    #
     # PRECOMPRESS_GZIP = True or False
     # PRECOMPRESS_ZOPFLI = True or False
     # PRECOMPRESS_BROTLI = True or False

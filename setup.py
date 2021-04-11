@@ -4,9 +4,15 @@
 
 import os
 import pathlib
+import re
 import setuptools
 
-import pelican_precompress
+
+def get_version():
+    path = pathlib.Path(__file__).parent / 'src/pelican/plugins/precompress/__init__.py'
+    version_blob = path.read_text()
+    return re.search("""__version__ = ['"](.+?)['"]""", version_blob).group(1)
+
 
 with pathlib.Path('README.rst').open('r') as file:
     long_description = file.read()
@@ -15,9 +21,9 @@ name = 'pelican_precompress'
 if os.getenv('PRECOMPRESS_NAME_SUFFIX'):
     name = f'pelican_precompress_{os.getenv("PRECOMPRESS_NAME_SUFFIX")}'
 
-version = pelican_precompress.__version__
+version = get_version()
 if os.getenv('PRECOMPRESS_VERSION_SUFFIX'):
-    version = f'{pelican_precompress.__version__}b{os.getenv("PRECOMPRESS_VERSION_SUFFIX")}'
+    version = f'{version}b{os.getenv("PRECOMPRESS_VERSION_SUFFIX")}'
 
 setuptools.setup(
     name=name,
@@ -28,7 +34,8 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type='text/x-rst',
     url='https://github.com/kurtmckee/pelican_precompress',
-    py_modules=['pelican_precompress'],
+    packages=['pelican.plugins.precompress'],
+    package_dir={'pelican': 'src/pelican'},
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Framework :: Pelican :: Plugins',

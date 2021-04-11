@@ -10,16 +10,11 @@ import pathlib
 from typing import Dict, Iterable, Optional, Set, Union
 import zlib
 
+import pelican
+
 __version__ = '1.1.2'
 
 log = logging.getLogger(__name__)
-
-# pelican doesn't have to be installed to run tests.
-try:
-    import pelican
-except ModuleNotFoundError:
-    log.debug('pelican is not installed.')
-    pelican = None
 
 # brotli support is optional.
 try:
