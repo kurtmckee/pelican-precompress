@@ -48,17 +48,27 @@ Further reading: `zopfli`_, `brotli`_
 2. Configure Pelican
 --------------------
 
-You'll need to import the plugin and add it to the list of active plugins.
+If you're using Pelican 4.5 or higher then you might not need to configure anything.
+pelican_precompress supports Pelican's namespace plugin architecture
+and will be automatically detected and loaded when Pelican runs.
+
+However, if you're maintaining a list of plugins for Pelican to use (even in Pelican 4.5)
+then you'll need to add it to the list of active plugins.
+
 Feel free to copy and paste the code below into your Pelican configuration file.
 Just uncomment and edit the configuration lines to your liking...or leave
 them alone because the defaults are awesome!
 
 ..  code-block:: python3
 
-    import pelican_precompress
+    # Pelican 4.5 introduced automatic plugin discovery and loading.
+    # You only need to add pelican_precompress to your PLUGINS list
+    # if your configuration file already has a PLUGINS list!
+    #
+    # PLUGINS = ['pelican.plugins.precompress']
 
-    PLUGINS = [pelican_precompress]
-
+    # These options can be customized as desired.
+    #
     # PRECOMPRESS_GZIP = True or False
     # PRECOMPRESS_ZOPFLI = True or False
     # PRECOMPRESS_BROTLI = True or False
@@ -151,26 +161,32 @@ You set them in your Pelican configuration file.
     To try compressing every file regardless of size, set this to ``0``.
 
 
-Testing
-=======
+Development
+===========
 
-**pelican_precompress** has 100% test coverage. If you'd like to test the
-code yourself, clone the git repository and run these commands:
+If you'd like to develop and/or test the code yourself,
+clone the git repository and run these commands to set
+up a Python virtual environment, install dependencies,
+and run the test suite:
 
 ..  code-block:: shell
 
-    $ python3 -m venv venv
+    $ python -m venv venv
     $ source venv/bin/activate
-    (venv) $ python -m pip install tox
+    (venv) $ python -m pip install poetry
+    (venv) $ poetry update
     (venv) $ tox
 
 The test suite uses tox to setup multiple environments with varying
 dependencies using multiple Python interpreters; pytest allows the
 test suite to have parametrized tests; pyfakefs creates a fake
-filesystem that the tests can run against; and coverage keeps track
-of which lines of code (and which branches) have been run.
+filesystem that the tests safely create and erase files in;
+and coverage keeps track of which lines of code have been run.
 
-Further reading: `tox`_, `venv`_, `pytest`_, `pyfakefs`_, `coverage`_
+**pelican_precompress** has 100% test coverage, but there may still be bugs.
+Please report any issues that you encounter.
+
+Further reading: `poetry`_, `tox`_, `venv`_, `pytest`_, `pyfakefs`_, `coverage`_
 
 
 ..  Links
@@ -183,6 +199,7 @@ Further reading: `tox`_, `venv`_, `pytest`_, `pyfakefs`_, `coverage`_
 ..  _gzip_static: https://nginx.org/en/docs/http/ngx_http_gzip_static_module.html#gzip_static
 ..  _gzip_vary: https://nginx.org/en/docs/http/ngx_http_gzip_module.html#gzip_vary
 ..  _nginx brotli module: https://github.com/google/ngx_brotli
+..  _poetry: https://python-poetry.org/
 ..  _tox: https://tox.readthedocs.io/en/latest/
 ..  _pytest: https://docs.pytest.org/en/latest/
 ..  _pyfakefs: https://jmcgeheeiv.github.io/pyfakefs/release/

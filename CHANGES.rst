@@ -10,6 +10,27 @@ Unreleased changes
 
 
 
+
+2.0.0 - 2021-04-13
+==================
+
+*   Migrate to the namespace plugin architecture introduced in Pelican 4.5.
+*   Migrate to Poetry to manage the dependencies and build process.
+
+**Breaking change**
+
+Pelican 4.5 introduced a namespace plugin architecture
+which allows automatic plugin detection and loading.
+
+pelican_precompress 2.0.0 supports this new architecture,
+but this change requires existing users to modify the
+``PLUGINS`` list in the Pelican configuration file.
+
+pelican_precompress can be referenced and enabled with the name
+``'pelican.plugins.precompress'`` in the ``PLUGINS`` list.
+
+
+
 1.1.2 - 2021-02-11
 ==================
 
