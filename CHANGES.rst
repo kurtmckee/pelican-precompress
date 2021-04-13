@@ -9,6 +9,7 @@ Unreleased changes
 ==================
 
 *   Migrate to the namespace plugin architecture introduced in Pelican 4.5.
+*   Migrate to Poetry to manage the dependencies and build process.
 
 
 
