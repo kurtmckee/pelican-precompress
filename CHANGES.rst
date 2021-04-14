@@ -8,6 +8,8 @@ Changelog
 Unreleased changes
 ==================
 
+*   Do not scan the filesystem for files to compress
+    when all compression algorithms are disabled.
 
 
 

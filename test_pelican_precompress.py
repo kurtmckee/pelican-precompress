@@ -12,6 +12,21 @@ import pytest
 import pelican.plugins.precompress as pp
 
 
+@pytest.fixture
+def multiprocessing():
+    def apply_async_mock(fn, args, *extra_args, **kwargs):
+        """Act as a pass-through for multiprocessing.Pool.apply_async() calls."""
+
+        return fn(*args, *extra_args, **kwargs)
+
+    multiprocessing_mock = Mock()
+    multiprocessing_mock.Pool.return_value = multiprocessing_mock
+    multiprocessing_mock.apply_async = apply_async_mock
+
+    with patch('pelican.plugins.precompress.multiprocessing', multiprocessing_mock):
+        yield multiprocessing_mock
+
+
 @pytest.mark.parametrize(
     'installed_modules, expected_settings',
     (
@@ -154,19 +169,7 @@ def test_copyrights(path):
         assert f'2019-{time.gmtime().tm_year}' in file.read(100), f'{path.name} has an incorrect copyright date'
 
 
-def apply_async_mock(fn, args, *extra_args, **kwargs):
-    """Act as a pass-through for multiprocessing.Pool.apply_async() calls."""
-
-    return fn(*args, *extra_args, **kwargs)
-
-
-multiprocessing_mock = Mock()
-multiprocessing_mock.Pool.return_value = multiprocessing_mock
-multiprocessing_mock.apply_async = apply_async_mock
-
-
-@patch('pelican.plugins.precompress.multiprocessing', multiprocessing_mock)
-def test_compress_files_do_nothing(fs):
+def test_compress_files_do_nothing(fs, multiprocessing):
     """If all compressors are disabled, no compressed files should be written."""
     fs.create_file('/test.txt')
     instance = Mock()
@@ -179,10 +182,10 @@ def test_compress_files_do_nothing(fs):
     pp.compress_files(instance)
     assert not pathlib.Path('/test.txt.br').exists()
     assert not pathlib.Path('/test.txt.gz').exists()
+    assert multiprocessing.Pool.call_count == 0
 
 
-@patch('pelican.plugins.precompress.multiprocessing', multiprocessing_mock)
-def test_compress_files_never_overwrite(fs):
+def test_compress_files_never_overwrite(fs, multiprocessing):
     with open('/test.txt', 'wb') as file:
         file.write(b'a' * 100)
     fs.create_file('/test.txt.gz')
@@ -200,8 +203,7 @@ def test_compress_files_never_overwrite(fs):
     assert pathlib.Path('/test.txt.gz').stat().st_size == 0
 
 
-@patch('pelican.plugins.precompress.multiprocessing', multiprocessing_mock)
-def test_compress_files_skip_existing_matching_files(fs):
+def test_compress_files_skip_existing_matching_files(fs, multiprocessing):
     with open('/test.txt', 'wb') as file:
         file.write(b'abc' * 1000)
     destination = pathlib.Path('/test.txt.gz')
@@ -224,8 +226,7 @@ def test_compress_files_skip_existing_matching_files(fs):
     assert destination.stat().st_size == destination_size
 
 
-@patch('pelican.plugins.precompress.multiprocessing', multiprocessing_mock)
-def test_compress_files_overwrite_br(fs):
+def test_compress_files_overwrite_br(fs, multiprocessing):
     brotli = pytest.importorskip('brotli')
     with open('/test.txt', 'wb') as file:
         file.write(b'a' * 100)
@@ -246,8 +247,7 @@ def test_compress_files_overwrite_br(fs):
         assert brotli.decompress(file.read()) == b'a' * 100
 
 
-@patch('pelican.plugins.precompress.multiprocessing', multiprocessing_mock)
-def test_compress_files_overwrite_gz(fs):
+def test_compress_files_overwrite_gz(fs, multiprocessing):
     with open('/test.txt', 'wb') as file:
         file.write(b'a' * 100)
     with open('/test.txt.gz', 'wb') as file:
@@ -267,8 +267,7 @@ def test_compress_files_overwrite_gz(fs):
         assert gzip.decompress(file.read()) == b'a' * 100
 
 
-@patch('pelican.plugins.precompress.multiprocessing', multiprocessing_mock)
-def test_compress_files_file_size_increase(fs):
+def test_compress_files_file_size_increase(fs, multiprocessing):
     with open('/test.txt', 'wb') as file:
         file.write(b'a' * 2)
     instance = Mock()
@@ -285,8 +284,7 @@ def test_compress_files_file_size_increase(fs):
     assert not pathlib.Path('/test.txt.gz').exists()
 
 
-@patch('pelican.plugins.precompress.multiprocessing', multiprocessing_mock)
-def test_compress_files_continue_on_small_files(fs):
+def test_compress_files_continue_on_small_files(fs, multiprocessing):
     """Verify that small files do not cause an early exit.
 
     This was incorrect behavior was reported in issue #5.
@@ -310,8 +308,7 @@ def test_compress_files_continue_on_small_files(fs):
     assert pathlib.Path('/999-must-compress.txt.gz').exists()
 
 
-@patch('pelican.plugins.precompress.multiprocessing', multiprocessing_mock)
-def test_compress_files_overwrite_erase_existing_file(fs):
+def test_compress_files_overwrite_erase_existing_file(fs, multiprocessing):
     """Ensure existing files are erased if the file size would increase."""
     with open('/test.txt', 'wb') as file:
         file.write(b'a' * 2)
@@ -332,8 +329,7 @@ def test_compress_files_overwrite_erase_existing_file(fs):
     assert not pathlib.Path('/test.txt.gz').exists()
 
 
-@patch('pelican.plugins.precompress.multiprocessing', multiprocessing_mock)
-def test_compress_files_success_all_algorithms(fs):
+def test_compress_files_success_all_algorithms(fs, multiprocessing):
     pytest.importorskip('brotli')
     pytest.importorskip('zopfli')
     with open('/test.txt', 'wb') as file:
