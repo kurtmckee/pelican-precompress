@@ -150,9 +150,18 @@ def test_compress_with_gzip_exception():
 
 
 def test_register():
+    def original_send(sender):
+        return 'send-success'
     with patch('pelican.plugins.precompress.pelican', Mock()) as pelican:
+        pelican.signals.finalized.send = original_send
         pp.register()
-    pelican.signals.finalized.connect.assert_called_once_with(pp.compress_files)
+    assert pelican.signals.finalized.connect.call_count == 0
+    assert pelican.signals.finalized.send is not original_send
+
+    with patch('pelican.plugins.precompress.compress_files', Mock()) as mock:
+        result = pelican.signals.finalized.send('bogus')
+    assert mock.call_count == 1
+    assert result == 'send-success'
 
 
 copyrighted_files = [

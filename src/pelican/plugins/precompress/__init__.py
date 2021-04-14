@@ -243,5 +243,27 @@ def compress_with_zopfli(data: bytes) -> bytes:
 
 
 def register():
-    # Wait until all of the files are written.
-    pelican.signals.finalized.connect(compress_files)
+    """Arrange for the plugin to run at the very last possible opportunity.
+
+    Pelican lacks a granular signal structure, and its dependency blinker
+    is unable to order the set of receivers for a specific signal (or to
+    have an order imposed on it externally).
+
+    To ensure that compression happens only after other plugins have run
+    (for example, after a minification plugin runs), pelican_precompress
+    doesn't actually register itself with the *finalized* signal.
+
+    Instead, it wraps the signal's ``send()`` method, and compresses files
+    after all signal receivers have been called.
+    """
+
+    def send_then_compress(original_send):
+        @functools.wraps(original_send)
+        def wrapper(sender):
+            result = original_send(sender)
+            compress_files(sender)
+            return result
+
+        return wrapper
+
+    pelican.signals.finalized.send = send_then_compress(pelican.signals.finalized.send)
