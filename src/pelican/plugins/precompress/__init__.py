@@ -135,6 +135,10 @@ def compress_files(instance):
             ('zopfli', '.gz', compress_with_zopfli, decompress_with_gzip),
         )
 
+    # Exit quickly if no algorithms are enabled.
+    if not enabled_formats:
+        return
+
     pool = multiprocessing.Pool()
 
     minimum_size = settings['PRECOMPRESS_MIN_SIZE']
