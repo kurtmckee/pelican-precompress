@@ -10,6 +10,15 @@ Unreleased changes
 
 
 
+2.1.0 - 2021-08-09
+==================
+
+*   Do not scan the filesystem for files to compress
+    when all compression algorithms are disabled.
+*   Add `pelican-granular-signals`_ as a dependency.
+*   Guarantee that files are compressed at the right time.
+
+
 
 2.0.0 - 2021-04-13
 ==================
@@ -68,7 +77,8 @@ pelican_precompress can be referenced and enabled with the name
 
 
 
-..  Contributor links
-..  -----------------
+..  Links
+..  -----
 
+..  _pelican-granular-signals: https://github.com/kurtmckee/pelican-granular-signals/
 ..  _Ryan Castellucci: https://github.com/ryancdotorg/
