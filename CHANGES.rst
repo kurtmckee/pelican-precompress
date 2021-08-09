@@ -10,7 +10,8 @@ Unreleased changes
 
 *   Do not scan the filesystem for files to compress
     when all compression algorithms are disabled.
-*   Guarantee that file are compressed after all other plugins have run.
+*   Add `pelican-granular-signals`_ as a dependency.
+*   Guarantee that files are compressed at the right time.
 
 
 
@@ -71,7 +72,8 @@ pelican_precompress can be referenced and enabled with the name
 
 
 
-..  Contributor links
-..  -----------------
+..  Links
+..  -----
 
+..  _pelican-granular-signals: https://github.com/kurtmckee/pelican-granular-signals/
 ..  _Ryan Castellucci: https://github.com/ryancdotorg/

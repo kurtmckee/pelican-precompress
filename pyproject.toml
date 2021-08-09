@@ -16,7 +16,8 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.6"
+python = ">=3.6.1,<4.0"
+pelican-granular-signals = "^1.0.0"
 
 [tool.poetry.dev-dependencies]
 tox = "^3.23.0"
@@ -37,6 +38,7 @@ isolated_build = True
 
 [testenv]
 deps =
+    blinker
     pytest
     pytest-cov
     pyfakefs
@@ -44,7 +46,7 @@ deps =
     zopfli: zopfli
 setenv =
     COVERAGE_FILE={toxworkdir}/.coverage.envname.{envname}
-commands = {envpython} -m pytest --color=yes --cov=pelican.plugins.precompress --cov=test_pelican_precompress --cov-report=term test_pelican_precompress.py
+commands = {envpython} -m pytest --color=yes --cov=pelican.plugins.precompress --cov=test_pelican_precompress --cov-report=term tests/
 
 
 [testenv:clean]
