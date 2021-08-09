@@ -10,7 +10,8 @@ import pathlib
 from typing import Dict, Iterable, Optional, Set, Union
 import zlib
 
-import pelican
+import blinker
+import pelican.plugins.granular_signals
 
 
 log = logging.getLogger(__name__)
@@ -243,27 +244,21 @@ def compress_with_zopfli(data: bytes) -> bytes:
 
 
 def register():
-    """Arrange for the plugin to run at the very last possible opportunity.
+    """Register the plugin to run at the correct time.
 
     Pelican lacks a granular signal structure, and its dependency blinker
     is unable to order the set of receivers for a specific signal (or to
     have an order imposed on it externally).
 
     To ensure that compression happens only after other plugins have run
-    (for example, after a minification plugin runs), pelican_precompress
+    (for example, after a minification plugin runs), pelican-precompress
     doesn't actually register itself with the *finalized* signal.
 
-    Instead, it wraps the signal's ``send()`` method, and compresses files
-    after all signal receivers have been called.
+    Instead, it relies on the pelican-granular-signals plugin's
+    "compress" signal.
     """
 
-    def send_then_compress(original_send):
-        @functools.wraps(original_send)
-        def wrapper(sender):
-            result = original_send(sender)
-            compress_files(sender)
-            return result
+    # Guarantee that the granular-signals plugin is registered.
+    pelican.plugins.granular_signals.register()
 
-        return wrapper
-
-    pelican.signals.finalized.send = send_then_compress(pelican.signals.finalized.send)
+    blinker.signal("compress").connect(compress_files)
