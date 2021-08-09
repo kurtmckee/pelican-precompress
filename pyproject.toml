@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pelican_precompress"
-version = "2.0.0"
+version = "2.1.0"
 description = "Pre-compress your Pelican site using gzip, zopfli, and brotli!"
 authors = ["Kurt McKee <contactme@kurtmckee.org>"]
 license = "MIT"
