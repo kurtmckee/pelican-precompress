@@ -8,6 +8,7 @@ Changelog
 Unreleased changes
 ==================
 
+*   Support Python 3.10.
 
 
 2.1.0 - 2021-08-09
