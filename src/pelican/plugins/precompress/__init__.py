@@ -53,7 +53,7 @@ class FileSizeIncrease(Exception):
     pass
 
 
-def get_paths_to_compress(settings: Dict[str, pathlib.Path]) -> Iterable[pathlib.Path]:
+def get_paths_to_compress(settings: Dict[str, str]) -> Iterable[pathlib.Path]:
     for path in pathlib.Path(settings["OUTPUT_PATH"]).rglob("*"):
         if path.suffix in settings["PRECOMPRESS_TEXT_EXTENSIONS"]:
             yield path
