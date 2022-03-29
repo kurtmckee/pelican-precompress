@@ -8,6 +8,10 @@ Changelog
 Unreleased changes
 ==================
 
+
+2.1.1 - 2022-03-29
+==================
+
 *   Support Python 3.10.
 
 
