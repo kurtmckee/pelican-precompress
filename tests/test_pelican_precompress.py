@@ -158,17 +158,18 @@ def test_register():
     assert blinker.signal("compress").connect.call_count == 1
 
 
+root = pathlib.Path(__file__).parent.parent
 copyrighted_files = [
-    *list(pathlib.Path(__file__).parent.glob('*.ini')),
-    *list(pathlib.Path(__file__).parent.glob('*.py')),
-    *list(pathlib.Path(__file__).parent.glob('*.rst')),
-    *list(pathlib.Path(__file__).parent.glob('*.txt')),
+    *list(root.glob('*.rst')),
+    *list(root.glob('*.txt')),
+    *list((root / "src").rglob('*.py')),
+    *list((root / "tests").rglob('*.py')),
 ]
 
 
 @pytest.mark.parametrize('path', copyrighted_files)
 def test_copyrights(path):
-    with path.open('r') as file:
+    with path.open('r', encoding="utf8") as file:
         assert f'2019-{time.gmtime().tm_year}' in file.read(100), f'{path.name} has an incorrect copyright date'
 
 
