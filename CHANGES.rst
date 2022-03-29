@@ -1,5 +1,5 @@
 ..  This file is part of the pelican_precompress plugin.
-..  Copyright 2019-2021 Kurt McKee <contactme@kurtmckee.org>
+..  Copyright 2019-2022 Kurt McKee <contactme@kurtmckee.org>
 ..  Released under the MIT license.
 
 Changelog
@@ -8,6 +8,7 @@ Changelog
 Unreleased changes
 ==================
 
+*   Support Python 3.10.
 
 
 2.1.0 - 2021-08-09
