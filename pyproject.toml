@@ -16,64 +16,17 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = ">=3.6.1,<4.0"
+python = ">=3.6.2,<4.0"
 pelican-granular-signals = "^1.0.0"
 
 [tool.poetry.dev-dependencies]
 tox = "^3.23.0"
+isort = "^5.10.1"
+black = "^22.3.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
-
-
-[tool.tox]
-legacy_tox_ini = """
-
-[tox]
-envlist =
-    clean
-    py{310, 39, 38, 37, 36}-{brotli, }-{zopfli, }
-    report
-skip_missing_interpreters = True
-isolated_build = True
-
-
-[testenv]
-deps =
-    blinker
-    pytest
-    pytest-cov
-    pyfakefs
-    brotli: brotli
-    zopfli: zopfli
-setenv =
-    COVERAGE_FILE={toxworkdir}/.coverage.envname.{envname}
-commands = {envpython} -m pytest --color=yes --cov=pelican.plugins.precompress --cov=test_pelican_precompress --cov-report=term tests/
-
-
-[testenv:clean]
-skip_install = True
-deps =
-    coverage[toml]
-setenv =
-    COVERAGE_FILE={toxworkdir}/.coverage
-commands =
-    {envpython} -m coverage erase
-
-
-[testenv:report]
-skip_install = True
-deps =
-    coverage[toml]
-setenv =
-    COVERAGE_FILE={toxworkdir}/.coverage
-commands =
-    {envpython} -m coverage combine
-    {envpython} -m coverage report
-    {envpython} -m coverage html
-
-"""
 
 
 [tool.coverage.run]
@@ -85,3 +38,7 @@ source = [
     "src",
     "*/site-packages",
 ]
+
+
+[tool.isort]
+profile = "black"
