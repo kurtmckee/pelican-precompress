@@ -8,6 +8,9 @@ Changelog
 Unreleased changes
 ==================
 
+*   Support Python 3.11.
+*   Drop support for Python 3.6.
+
 **Branch name changes**
 
 *   Renamed the ``main`` git branch to ``releases``,
