@@ -26,6 +26,12 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.coverage.run]
 branch = true
+parallel = true
+data_file = ".tox/.coverage-data-files/.coverage"
+source = [
+    "pelican.plugins.precompress",
+    "tests",
+]
 
 
 [tool.coverage.paths]
@@ -33,6 +39,10 @@ source = [
     "src",
     "*/site-packages",
 ]
+
+
+[tool.coverage.report]
+fail_under = 100
 
 
 [tool.isort]
