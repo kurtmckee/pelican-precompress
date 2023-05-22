@@ -11,10 +11,12 @@ Unreleased changes
 *   Support Python 3.11.
 *   Drop support for Python 3.6.
 
-**Branch name changes**
+**Administrative changes**
 
-*   Renamed the ``main`` git branch to ``releases``,
-    and renamed the ``develop`` git branch to ``main``.
+*   Rename the ``main`` git branch to ``releases``
+    and rename the ``develop`` git branch to ``main``.
+*   Use pre-commit to lint and fix code
+    instead of running linters in the test suite.
 
 
 2.1.1 - 2022-03-29
