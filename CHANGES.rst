@@ -1,5 +1,5 @@
 ..  This file is part of the pelican_precompress plugin.
-..  Copyright 2019-2022 Kurt McKee <contactme@kurtmckee.org>
+..  Copyright 2019-2023 Kurt McKee <contactme@kurtmckee.org>
 ..  Released under the MIT license.
 
 Changelog
@@ -7,6 +7,17 @@ Changelog
 
 Unreleased changes
 ==================
+
+*   Support Python 3.11.
+*   Support Python 3.12.
+*   Drop support for Python 3.6.
+
+**Administrative changes**
+
+*   Rename the ``main`` git branch to ``releases``
+    and rename the ``develop`` git branch to ``main``.
+*   Use pre-commit to lint and fix code
+    instead of running linters in the test suite.
 
 
 2.1.1 - 2022-03-29

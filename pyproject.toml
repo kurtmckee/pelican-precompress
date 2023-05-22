@@ -16,13 +16,8 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = ">=3.6.2,<4.0"
+python = ">=3.7,<4.0"
 pelican-granular-signals = "^1.0.0"
-
-[tool.poetry.dev-dependencies]
-tox = "^3.23.0"
-isort = "^5.10.1"
-black = "^22.3.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -31,6 +26,12 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.coverage.run]
 branch = true
+parallel = true
+data_file = ".tox/.coverage-data-files/.coverage"
+source = [
+    "pelican.plugins.precompress",
+    "tests",
+]
 
 
 [tool.coverage.paths]
@@ -40,5 +41,15 @@ source = [
 ]
 
 
+[tool.coverage.report]
+fail_under = 100
+
+
 [tool.isort]
 profile = "black"
+
+
+[tool.pytest.ini_options]
+filterwarnings = [
+    "error",
+]

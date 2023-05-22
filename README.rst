@@ -1,5 +1,5 @@
 ..  This file is part of the pelican_precompress plugin.
-..  Copyright 2019-2022 Kurt McKee <contactme@kurtmckee.org>
+..  Copyright 2019-2023 Kurt McKee <contactme@kurtmckee.org>
 ..  Released under the MIT license.
 
 pelican_precompress
@@ -171,11 +171,20 @@ and run the test suite:
 
 ..  code-block:: shell
 
-    $ python -m venv venv
-    $ source venv/bin/activate
-    (venv) $ python -m pip install poetry
-    (venv) $ poetry update
-    (venv) $ tox
+    python -m venv .venv
+
+    # Activate the virtual environment (Linux)
+    source .venv/bin/activate
+
+    # Activate the virtual environment (Windows)
+    & .venv/Scripts/Activate.ps1
+
+    python -m pip install poetry pre-commit tox
+    pre-commit install
+    poetry install
+
+    # Run the test suite
+    tox
 
 The test suite uses tox to setup multiple environments with varying
 dependencies using multiple Python interpreters; pytest allows the
