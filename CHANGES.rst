@@ -8,6 +8,11 @@ Changelog
 Unreleased changes
 ==================
 
+**Branch name changes**
+
+*   Renamed the ``main`` git branch to ``releases``,
+    and renamed the ``develop`` git branch to ``main``.
+
 
 2.1.1 - 2022-03-29
 ==================
