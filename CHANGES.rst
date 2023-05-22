@@ -9,6 +9,7 @@ Unreleased changes
 ==================
 
 *   Support Python 3.11.
+*   Support Python 3.12.
 *   Drop support for Python 3.6.
 
 **Administrative changes**
