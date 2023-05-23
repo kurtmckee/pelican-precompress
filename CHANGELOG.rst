@@ -1,5 +1,5 @@
 ..  This file is part of the pelican_precompress plugin.
-..  Copyright 2019-2022 Kurt McKee <contactme@kurtmckee.org>
+..  Copyright 2019-2023 Kurt McKee <contactme@kurtmckee.org>
 ..  Released under the MIT license.
 
 Changelog
@@ -7,6 +7,14 @@ Changelog
 
 Unreleased changes
 ==================
+
+
+
+2.2.0 - 2023-05-22
+==================
+
+*   Support Python 3.11 and 3.12.
+*   Drop support for Python 3.6 and 3.7.
 
 
 2.1.1 - 2022-03-29

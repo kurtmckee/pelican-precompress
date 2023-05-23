@@ -1,5 +1,5 @@
 ..  This file is part of the pelican_precompress plugin.
-..  Copyright 2019-2022 Kurt McKee <contactme@kurtmckee.org>
+..  Copyright 2019-2023 Kurt McKee <contactme@kurtmckee.org>
 ..  Released under the MIT license.
 
 pelican_precompress
@@ -171,11 +171,20 @@ and run the test suite:
 
 ..  code-block:: shell
 
-    $ python -m venv venv
-    $ source venv/bin/activate
-    (venv) $ python -m pip install poetry
-    (venv) $ poetry update
-    (venv) $ tox
+    python -m venv .venv
+
+    # Activate the virtual environment (Linux)
+    source .venv/bin/activate
+
+    # Activate the virtual environment (Windows)
+    & .venv/Scripts/Activate.ps1
+
+    python -m pip install poetry pre-commit tox
+    pre-commit install
+    poetry install
+
+    # Run the test suite
+    tox
 
 The test suite uses tox to setup multiple environments with varying
 dependencies using multiple Python interpreters; pytest allows the
@@ -200,8 +209,8 @@ Further reading: `poetry`_, `tox`_, `venv`_, `pytest`_, `pyfakefs`_, `coverage`_
 ..  _gzip_vary: https://nginx.org/en/docs/http/ngx_http_gzip_module.html#gzip_vary
 ..  _nginx brotli module: https://github.com/google/ngx_brotli
 ..  _poetry: https://python-poetry.org/
-..  _tox: https://tox.readthedocs.io/en/latest/
+..  _tox: https://tox.wiki/en/latest/
 ..  _pytest: https://docs.pytest.org/en/latest/
-..  _pyfakefs: https://jmcgeheeiv.github.io/pyfakefs/release/
+..  _pyfakefs: https://pytest-pyfakefs.readthedocs.io/en/latest/
 ..  _venv: https://docs.python.org/3/library/venv.html
 ..  _coverage: https://coverage.readthedocs.io/en/latest/
