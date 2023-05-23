@@ -8,16 +8,13 @@ Changelog
 Unreleased changes
 ==================
 
-*   Support Python 3.11.
-*   Support Python 3.12.
-*   Drop support for Python 3.6.
 
-**Administrative changes**
 
-*   Rename the ``main`` git branch to ``releases``
-    and rename the ``develop`` git branch to ``main``.
-*   Use pre-commit to lint and fix code
-    instead of running linters in the test suite.
+2.2.0 - 2023-05-22
+==================
+
+*   Support Python 3.11 and 3.12.
+*   Drop support for Python 3.6 and 3.7.
 
 
 2.1.1 - 2022-03-29
