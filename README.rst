@@ -209,8 +209,8 @@ Further reading: `poetry`_, `tox`_, `venv`_, `pytest`_, `pyfakefs`_, `coverage`_
 ..  _gzip_vary: https://nginx.org/en/docs/http/ngx_http_gzip_module.html#gzip_vary
 ..  _nginx brotli module: https://github.com/google/ngx_brotli
 ..  _poetry: https://python-poetry.org/
-..  _tox: https://tox.readthedocs.io/en/latest/
+..  _tox: https://tox.wiki/en/latest/
 ..  _pytest: https://docs.pytest.org/en/latest/
-..  _pyfakefs: https://jmcgeheeiv.github.io/pyfakefs/release/
+..  _pyfakefs: https://pytest-pyfakefs.readthedocs.io/en/latest/
 ..  _venv: https://docs.python.org/3/library/venv.html
 ..  _coverage: https://coverage.readthedocs.io/en/latest/
