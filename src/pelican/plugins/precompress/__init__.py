@@ -91,14 +91,10 @@ def get_settings(instance) -> Dict[str, Union[bool, pathlib.Path, Set[str]]]:
         settings["PRECOMPRESS_GZIP"] = False
 
     # '.br' and '.gz' are excluded extensions.
-    excluded_extensions = {
-        extension
-        for extension in {".br", ".gz"}
-        if extension in settings["PRECOMPRESS_TEXT_EXTENSIONS"]
-    }
-    for count, extension in enumerate(excluded_extensions, 1):
-        if count == 1:
-            log.warning("gzip and brotli file extensions are excluded.")
+    excluded_extensions = {".br", ".gz"} & settings["PRECOMPRESS_TEXT_EXTENSIONS"]
+    if excluded_extensions:
+        log.warning("gzip and brotli file extensions are excluded.")
+    for extension in excluded_extensions:
         log.warning(
             f'Removing "{extension}" from the set of text file extensions to pre-compress.'
         )
@@ -110,9 +106,9 @@ def get_settings(instance) -> Dict[str, Union[bool, pathlib.Path, Set[str]]]:
         for extension in settings["PRECOMPRESS_TEXT_EXTENSIONS"]
         if not extension.startswith(".")
     }
-    for count, extension in enumerate(invalid_extensions, 1):
-        if count == 1:
-            log.warning("File extensions must start with a period.")
+    if invalid_extensions:
+        log.warning("File extensions must start with a period.")
+    for extension in invalid_extensions:
         log.warning(
             f'Removing "{extension}" from the set of text file extensions to pre-compress.'
         )
