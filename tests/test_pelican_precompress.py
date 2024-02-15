@@ -1,5 +1,5 @@
 # This file is part of the pelican-precompress plugin.
-# Copyright 2019-2023 Kurt McKee <contactme@kurtmckee.org>
+# Copyright 2019-2024 Kurt McKee <contactme@kurtmckee.org>
 # Released under the MIT license.
 
 import gzip
@@ -186,7 +186,6 @@ def test_register():
 
 root = pathlib.Path(__file__).parent.parent
 copyrighted_files = [
-    *list(root.glob("*.ini")),
     *list(root.glob("*.rst")),
     *list(root.glob("*.txt")),
     *list((root / "src").rglob("*.py")),
