@@ -2,13 +2,15 @@
 # Copyright 2019-2024 Kurt McKee <contactme@kurtmckee.org>
 # Released under the MIT license.
 
+from __future__ import annotations
+
 import functools
 import gzip
 import logging
 import multiprocessing
 import pathlib
 import zlib
-from typing import Dict, Iterable, Optional, Set, Union
+from collections.abc import Iterable
 
 import blinker
 import pelican.plugins.granular_signals
@@ -31,7 +33,7 @@ except ModuleNotFoundError:
     zopfli = None
 
 
-DEFAULT_TEXT_EXTENSIONS: Set[str] = {
+DEFAULT_TEXT_EXTENSIONS: set[str] = {
     ".atom",
     ".css",
     ".htm",
@@ -53,13 +55,13 @@ class FileSizeIncrease(Exception):
     pass
 
 
-def get_paths_to_compress(settings: Dict[str, str]) -> Iterable[pathlib.Path]:
+def get_paths_to_compress(settings: dict[str, str]) -> Iterable[pathlib.Path]:
     for path in pathlib.Path(settings["OUTPUT_PATH"]).rglob("*"):
         if path.suffix in settings["PRECOMPRESS_TEXT_EXTENSIONS"]:
             yield path
 
 
-def get_settings(instance) -> Dict[str, Union[bool, pathlib.Path, Set[str]]]:
+def get_settings(instance) -> dict[str, bool | pathlib.Path | set[str]]:
     """Extract and validate the Pelican settings."""
 
     settings = {
@@ -205,7 +207,7 @@ def validate_file_sizes(wrapped):
     return wrapper
 
 
-def decompress_with_brotli(path: pathlib.Path) -> Optional[bytes]:
+def decompress_with_brotli(path: pathlib.Path) -> bytes | None:
     """Decompress a file using brotli decompression."""
 
     try:
@@ -221,7 +223,7 @@ def compress_with_brotli(data: bytes) -> bytes:
     return brotli.compress(data, mode=brotli.MODE_TEXT, quality=11)
 
 
-def decompress_with_gzip(path: pathlib.Path) -> Optional[bytes]:
+def decompress_with_gzip(path: pathlib.Path) -> bytes | None:
     """Decompress a file using gzip decompression."""
 
     try:
