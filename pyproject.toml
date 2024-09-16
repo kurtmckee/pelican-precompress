@@ -67,3 +67,27 @@ filterwarnings = [
     # pyfakefs 5.6.0 on Python 3.13 throws ResourceWarnings.
     "ignore:unclosed file.+pyfakefs:ResourceWarning",
 ]
+
+
+# scriv
+# -----
+
+[tool.scriv]
+version = "literal: pyproject.toml: tool.poetry.version"
+categories = [
+    "Breaking changes",
+    "Python support",
+    "Added",
+    "Fixed",
+    "Removed",
+    "Changed",
+    "Deprecated",
+    "Security",
+    "Development",
+]
+entry_title_template = "{{ version }} - {{ date.strftime('%Y-%m-%d') }}"
+format = "rst"
+fragment_directory = "changelog.d"
+insert_marker = "scriv-insert-here"
+main_branches = ["main", "releases"]
+new_fragment_template = "file: fragment-template.rst.txt"
