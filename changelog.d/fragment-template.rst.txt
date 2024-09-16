@@ -1,0 +1,9 @@
+..
+    Please select the correct category for the change you are making.
+    Delete all other categories from this document.
+
+{% for category in config.categories %}
+{{ category }}
+{{ config.rst_header_chars[1] * (category|length) }}
+{% endfor %}
+*   Describe your change here. EDIT ME!
