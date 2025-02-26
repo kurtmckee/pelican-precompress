@@ -15,6 +15,33 @@ Please see the fragment files in the `changelog.d directory`_.
 
 ..  scriv-insert-here
 
+.. _changelog-2.3.0:
+
+2.3.0 - 2025-02-26
+==================
+
+Python support
+--------------
+
+*   Support Python 3.13.
+*   Drop support for Python 3.8.
+
+Added
+-----
+
+*   Support zstandard compression.
+*   Add package extras to select compression algorithms.
+
+    The extras are named after each compression algorithm:
+    ``brotli``, ``zstandard``, and ``zopfli``.
+
+Development
+-----------
+
+*   Use scriv to manage the CHANGELOG.
+*   Add a workflow to prep release PRs.
+*   Migrate to PEP 621 project metadata.
+
 2.2.0 - 2023-05-22
 ==================
 
