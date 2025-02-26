@@ -30,7 +30,6 @@ Added
 -----
 
 *   Support zstandard compression.
-
 *   Add package extras to select compression algorithms.
 
     The extras are named after each compression algorithm:
@@ -40,7 +39,6 @@ Development
 -----------
 
 *   Use scriv to manage the CHANGELOG.
-
 *   Add a workflow to prep release PRs.
 *   Migrate to PEP 621 project metadata.
 
