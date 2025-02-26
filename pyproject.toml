@@ -1,5 +1,36 @@
+[project]
+name = "pelican_precompress"
+version = "2.2.0"
+description = "Pre-compress your Pelican site using gzip, zopfli, and brotli!"
+authors = [
+    { name = "Kurt McKee", email = "contactme@kurtmckee.org" },
+]
+license = "MIT"
+readme = "README.rst"
+keywords = [
+    "pelican",
+    "plugin",
+    "gzip",
+    "brotli",
+    "zopfli",
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Framework :: Pelican :: Plugins",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+]
+requires-python = ">=3.9"
+dependencies = [
+    "pelican-granular-signals >=1.0.0,<2.0.0",
+]
+
+[project.urls]
+Source = "https://github.com/kurtmckee/pelican-precompress"
+Changelog = "https://github.com/kurtmckee/pelican-precompress/blob/main/CHANGELOG.rst"
+
 [build-system]
-requires = ["poetry-core>=1.0.0"]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 
@@ -7,25 +38,9 @@ build-backend = "poetry.core.masonry.api"
 # ------
 
 [tool.poetry]
-name = "pelican_precompress"
-version = "2.2.0"
-description = "Pre-compress your Pelican site using gzip, zopfli, and brotli!"
-authors = ["Kurt McKee <contactme@kurtmckee.org>"]
-license = "MIT"
 packages = [
     { include = "pelican", from = "src" }
 ]
-readme = "README.rst"
-repository = "https://github.com/kurtmckee/pelican_precompress/"
-keywords = ["pelican", "plugin", "gzip", "brotli", "zopfli"]
-classifiers = [
-    "Framework :: Pelican :: Plugins",
-    "Development Status :: 5 - Production/Stable",
-]
-
-[tool.poetry.dependencies]
-python = ">=3.9"
-pelican-granular-signals = "^1.0.0"
 
 
 # coverage
