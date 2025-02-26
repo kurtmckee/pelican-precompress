@@ -2,6 +2,13 @@ name: "🧪 Test"
 
 on:
   pull_request:
+    types:
+      - "opened"
+      - "reopened"
+      - "synchronize"
+      # Release automation opens PRs as drafts without triggering CI;
+      # clicking "Ready for review" in the UI will trigger test runs.
+      - "ready_for_review"
   push:
     branches:
       - "main"
