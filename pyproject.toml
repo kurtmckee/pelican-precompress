@@ -1,28 +1,57 @@
-[tool.poetry]
+[project]
 name = "pelican_precompress"
-version = "2.2.0"
-description = "Pre-compress your Pelican site using gzip, zopfli, and brotli!"
-authors = ["Kurt McKee <contactme@kurtmckee.org>"]
+version = "2.3.0"
+description = "Pre-compress your Pelican site using gzip, brotli, zstandard, and zopfli!"
+authors = [
+    { name = "Kurt McKee", email = "contactme@kurtmckee.org" },
+]
 license = "MIT"
+readme = "README.rst"
+keywords = [
+    "pelican",
+    "plugin",
+    "gzip",
+    "brotli",
+    "zstandard",
+    "zstd",
+    "zopfli",
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Framework :: Pelican :: Plugins",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+]
+requires-python = ">=3.9"
+dependencies = [
+    "pelican-granular-signals >=1.0.0,<2.0.0",
+]
+
+[project.optional-dependencies]
+brotli = ["brotli"]
+zopfli = ["zopfli"]
+zstandard = ["pyzstd"]
+
+[project.urls]
+Source = "https://github.com/kurtmckee/pelican-precompress"
+Changelog = "https://github.com/kurtmckee/pelican-precompress/blob/main/CHANGELOG.rst"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+
+# poetry
+# ------
+
+[tool.poetry]
 packages = [
     { include = "pelican", from = "src" }
 ]
-readme = "README.rst"
-repository = "https://github.com/kurtmckee/pelican_precompress/"
-keywords = ["pelican", "plugin", "gzip", "brotli", "zopfli"]
-classifiers = [
-    "Framework :: Pelican :: Plugins",
-    "Development Status :: 5 - Production/Stable",
-]
 
-[tool.poetry.dependencies]
-python = ">=3.8"
-pelican-granular-signals = "^1.0.0"
 
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
-
+# coverage
+# --------
 
 [tool.coverage.run]
 branch = true
@@ -33,23 +62,52 @@ source = [
     "tests",
 ]
 
-
 [tool.coverage.paths]
 source = [
     "src",
     "*/site-packages",
 ]
 
-
 [tool.coverage.report]
 fail_under = 100
 
+
+# isort
+# -----
 
 [tool.isort]
 profile = "black"
 
 
+# pytest
+# ------
+
 [tool.pytest.ini_options]
+addopts = "--color=yes"
 filterwarnings = [
     "error",
 ]
+
+
+# scriv
+# -----
+
+[tool.scriv]
+version = "literal: pyproject.toml: project.version"
+categories = [
+    "Breaking changes",
+    "Python support",
+    "Added",
+    "Fixed",
+    "Removed",
+    "Changed",
+    "Deprecated",
+    "Security",
+    "Development",
+]
+entry_title_template = "{{ version }} - {{ date.strftime('%Y-%m-%d') }}"
+format = "rst"
+fragment_directory = "changelog.d"
+insert_marker = "scriv-insert-here"
+main_branches = ["main", "releases"]
+new_fragment_template = "file: fragment-template.rst.txt"

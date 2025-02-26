@@ -1,6 +1,8 @@
 # This file is part of the pelican-precompress plugin.
-# Copyright 2019-2023 Kurt McKee <contactme@kurtmckee.org>
+# Copyright 2019-2025 Kurt McKee <contactme@kurtmckee.org>
 # Released under the MIT license.
+
+from __future__ import annotations
 
 import functools
 import gzip
@@ -8,7 +10,7 @@ import logging
 import multiprocessing
 import pathlib
 import zlib
-from typing import Dict, Iterable, Optional, Set, Union
+from collections.abc import Iterable
 
 import blinker
 import pelican.plugins.granular_signals
@@ -30,8 +32,15 @@ except ModuleNotFoundError:
     log.debug("Note: pelican_precompress only targets zopfli, not zopflipy.")
     zopfli = None
 
+# zstandard support is optional.
+try:
+    import pyzstd
+except ModuleNotFoundError:
+    log.debug("pyzstd is not installed.")
+    pyzstd = None
 
-DEFAULT_TEXT_EXTENSIONS: Set[str] = {
+
+DEFAULT_TEXT_EXTENSIONS: set[str] = {
     ".atom",
     ".css",
     ".htm",
@@ -53,13 +62,13 @@ class FileSizeIncrease(Exception):
     pass
 
 
-def get_paths_to_compress(settings: Dict[str, str]) -> Iterable[pathlib.Path]:
+def get_paths_to_compress(settings: dict[str, str]) -> Iterable[pathlib.Path]:
     for path in pathlib.Path(settings["OUTPUT_PATH"]).rglob("*"):
         if path.suffix in settings["PRECOMPRESS_TEXT_EXTENSIONS"]:
             yield path
 
 
-def get_settings(instance) -> Dict[str, Union[bool, pathlib.Path, Set[str]]]:
+def get_settings(instance) -> dict[str, bool | pathlib.Path | set[str]]:
     """Extract and validate the Pelican settings."""
 
     settings = {
@@ -67,6 +76,9 @@ def get_settings(instance) -> Dict[str, Union[bool, pathlib.Path, Set[str]]]:
         "PRECOMPRESS_BROTLI": instance.settings.get("PRECOMPRESS_BROTLI", bool(brotli)),
         "PRECOMPRESS_GZIP": instance.settings.get("PRECOMPRESS_GZIP", True),
         "PRECOMPRESS_ZOPFLI": instance.settings.get("PRECOMPRESS_ZOPFLI", bool(zopfli)),
+        "PRECOMPRESS_ZSTANDARD": instance.settings.get(
+            "PRECOMPRESS_ZSTANDARD", bool(pyzstd)
+        ),
         "PRECOMPRESS_OVERWRITE": instance.settings.get("PRECOMPRESS_OVERWRITE", False),
         "PRECOMPRESS_MIN_SIZE": instance.settings.get("PRECOMPRESS_MIN_SIZE", 20),
         "PRECOMPRESS_TEXT_EXTENSIONS": set(
@@ -90,15 +102,18 @@ def get_settings(instance) -> Dict[str, Union[bool, pathlib.Path, Set[str]]]:
     if settings["PRECOMPRESS_ZOPFLI"]:
         settings["PRECOMPRESS_GZIP"] = False
 
-    # '.br' and '.gz' are excluded extensions.
-    excluded_extensions = {
-        extension
-        for extension in {".br", ".gz"}
-        if extension in settings["PRECOMPRESS_TEXT_EXTENSIONS"]
-    }
-    for count, extension in enumerate(excluded_extensions, 1):
-        if count == 1:
-            log.warning("gzip and brotli file extensions are excluded.")
+    # If zstandard is enabled, it must be installed.
+    if settings["PRECOMPRESS_ZSTANDARD"] and not pyzstd:
+        log.error("Disabling zstandard pre-compression because it is not installed.")
+        settings["PRECOMPRESS_ZSTANDARD"] = False
+
+    # '.br', '.gz', and '.zst' are excluded extensions.
+    excluded_extensions = {".br", ".gz", ".zst"} & settings[
+        "PRECOMPRESS_TEXT_EXTENSIONS"
+    ]
+    if excluded_extensions:
+        log.warning("brotli, gzip, and zstandard file extensions are excluded.")
+    for extension in excluded_extensions:
         log.warning(
             f'Removing "{extension}" from the set of text file extensions to pre-compress.'
         )
@@ -110,9 +125,9 @@ def get_settings(instance) -> Dict[str, Union[bool, pathlib.Path, Set[str]]]:
         for extension in settings["PRECOMPRESS_TEXT_EXTENSIONS"]
         if not extension.startswith(".")
     }
-    for count, extension in enumerate(invalid_extensions, 1):
-        if count == 1:
-            log.warning("File extensions must start with a period.")
+    if invalid_extensions:
+        log.warning("File extensions must start with a period.")
+    for extension in invalid_extensions:
         log.warning(
             f'Removing "{extension}" from the set of text file extensions to pre-compress.'
         )
@@ -140,6 +155,10 @@ def compress_files(instance):
     if settings["PRECOMPRESS_ZOPFLI"]:
         enabled_formats.append(
             ("zopfli", ".gz", compress_with_zopfli, decompress_with_gzip),
+        )
+    if settings["PRECOMPRESS_ZSTANDARD"]:
+        enabled_formats.append(
+            ("zstandard", ".zst", compress_with_zstandard, decompress_with_zstandard),
         )
 
     # Exit quickly if no algorithms are enabled.
@@ -209,7 +228,7 @@ def validate_file_sizes(wrapped):
     return wrapper
 
 
-def decompress_with_brotli(path: pathlib.Path) -> Optional[bytes]:
+def decompress_with_brotli(path: pathlib.Path) -> bytes | None:
     """Decompress a file using brotli decompression."""
 
     try:
@@ -225,7 +244,7 @@ def compress_with_brotli(data: bytes) -> bytes:
     return brotli.compress(data, mode=brotli.MODE_TEXT, quality=11)
 
 
-def decompress_with_gzip(path: pathlib.Path) -> Optional[bytes]:
+def decompress_with_gzip(path: pathlib.Path) -> bytes | None:
     """Decompress a file using gzip decompression."""
 
     try:
@@ -247,6 +266,22 @@ def compress_with_zopfli(data: bytes) -> bytes:
     """Compress binary data using zopfli compression."""
 
     return zopfli.gzip.compress(data)
+
+
+def decompress_with_zstandard(path: pathlib.Path) -> bytes | None:
+    """Decompress a file using zstandard decompression."""
+
+    try:
+        return pyzstd.decompress(path.read_bytes())
+    except pyzstd.ZstdError:
+        return None
+
+
+@validate_file_sizes
+def compress_with_zstandard(data: bytes) -> bytes:
+    """Compress binary data using zstandard compression."""
+
+    return pyzstd.compress(data)
 
 
 def register():
