@@ -1,7 +1,7 @@
 [project]
 name = "pelican_precompress"
 version = "2.2.0"
-description = "Pre-compress your Pelican site using gzip, zopfli, and brotli!"
+description = "Pre-compress your Pelican site using gzip, brotli, zstandard, and zopfli!"
 authors = [
     { name = "Kurt McKee", email = "contactme@kurtmckee.org" },
 ]
@@ -12,6 +12,8 @@ keywords = [
     "plugin",
     "gzip",
     "brotli",
+    "zstandard",
+    "zstd",
     "zopfli",
 ]
 classifiers = [

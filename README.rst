@@ -5,7 +5,7 @@
 pelican_precompress
 *******************
 
-*Pre-compress your Pelican site using gzip, zopfli, and brotli!*
+*Pre-compress your Pelican site using gzip, brotli, zstandard, and zopfli!*
 
 ----
 
@@ -33,14 +33,15 @@ It will automatically generate gzip files because gzip is built into the
 Python standard library.
 
 However, if you want highly-optimized gzip files you'll need the zopfli module.
-And if you want to have the very best compression currently available, you'll
-need to install the brotli module (which will require extra work in step 3).
+And if you want to have the very best compression currently available,
+you'll need to install the brotli and/or pyzstd modules (which will require extra work in step 3).
 
 ..  code-block:: shell-session
 
     $ pip install pelican_precompress
     $ pip install zopfli  # This produces smaller gzip'd files. Use it!
     $ pip install brotli  # This requires extra work in step 3.
+    $ pip install pyzstd  # This requires extra work in step 3.
 
 Further reading: `zopfli`_, `brotli`_
 
@@ -70,8 +71,9 @@ them alone because the defaults are awesome!
     # These options can be customized as desired.
     #
     # PRECOMPRESS_GZIP = True or False
-    # PRECOMPRESS_ZOPFLI = True or False
     # PRECOMPRESS_BROTLI = True or False
+    # PRECOMPRESS_ZSTANDARD = True or False
+    # PRECOMPRESS_ZOPFLI = True or False
     # PRECOMPRESS_OVERWRITE = False
     # PRECOMPRESS_MIN_SIZE = 20
     # PRECOMPRESS_TEXT_EXTENSIONS = {
@@ -97,20 +99,24 @@ To enable it, add something like this to your nginx configuration file:
         gzip_vary on;
     }
 
-At the time of writing, nginx doesn't natively support brotli compression.
-To get it, you'll need to compile the static brotli module as an nginx
-dynamic module, or recompile nginx from scratch. When it's done you'll
-add something like this to your nginx configuration file:
+At the time of writing, nginx doesn't natively support brotli or zstandard compression.
+
+To serve pre-compressed brotli files, you'll need the static brotli module.
+To serve pre-compressed zstandard files, you'll need the static zstandard module.
+When either or both of those are installed,
+you'll add something like this to your nginx configuration file:
 
 ..  code-block:: nginx
 
-    load_module /usr/lib/nginx/modules/ngx_http_brotli_static_module.so;
+    load_module modules/ngx_http_brotli_static_module.so;
+    load_module modules/ngx_http_zstd_static_module.so;
 
     http {
         brotli_static on;
+        zstd_static on;
     }
 
-Further reading: `gzip_static`_, `gzip_vary`_, `nginx brotli module`_
+Further reading: `gzip_static`_, `gzip_vary`_, `nginx brotli module`_, `nginx zstd module`_
 
 
 Configuration
@@ -124,19 +130,26 @@ You set them in your Pelican configuration file.
     This is always ``True`` unless you set this to ``False``.
     For example, you might turn this off during development.
 
+*   ``PRECOMPRESS_BROTLI`` (bool, default is True if brotli is installed)
+
+    If the brotli module is installed this will default to ``True``.
+    You might set this to ``False`` during development.
+    If you set this to ``True`` when the brotli module isn't installed
+    then nothing will happen.
+
+*   ``PRECOMPRESS_ZSTANDARD`` (bool, default is True if pyzstd is installed)
+
+    If the pyzstd module is installed this will default to ``True``.
+    You might set this to ``False`` during development.
+    If you set this to ``True`` when the pyzstd module isn't installed
+    then nothing will happen.
+
 *   ``PRECOMPRESS_ZOPFLI`` (bool, default is True if zopfli is installed)
 
     If the zopfli module is installed this will default to ``True``.
     You might set this to ``False`` during development.
     Note that if you try to enable zopfli compression but the module
     isn't installed then nothing will happen.
-
-*   ``PRECOMPRESS_BROTLI`` (bool, default is True if brotli is installed)
-
-    If the brotli module is installed this will default to ``True``.
-    You might set this to ``False`` during development.
-    Like ``PRECOMPRESS_ZOPFLI``, if you set this to ``True`` when the
-    brotli module isn't installed then nothing will happen.
 
 *   ``PRECOMPRESS_OVERWRITE`` (bool, default is False)
 
@@ -208,6 +221,7 @@ Further reading: `poetry`_, `tox`_, `venv`_, `pytest`_, `pyfakefs`_, `coverage`_
 ..  _gzip_static: https://nginx.org/en/docs/http/ngx_http_gzip_static_module.html#gzip_static
 ..  _gzip_vary: https://nginx.org/en/docs/http/ngx_http_gzip_module.html#gzip_vary
 ..  _nginx brotli module: https://github.com/google/ngx_brotli
+..  _nginx zstd module: https://github.com/tokers/zstd-nginx-module
 ..  _poetry: https://python-poetry.org/
 ..  _tox: https://tox.wiki/en/latest/
 ..  _pytest: https://docs.pytest.org/en/latest/

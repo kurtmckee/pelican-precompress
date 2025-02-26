@@ -32,6 +32,13 @@ except ModuleNotFoundError:
     log.debug("Note: pelican_precompress only targets zopfli, not zopflipy.")
     zopfli = None
 
+# zstandard support is optional.
+try:
+    import pyzstd
+except ModuleNotFoundError:
+    log.debug("pyzstd is not installed.")
+    pyzstd = None
+
 
 DEFAULT_TEXT_EXTENSIONS: set[str] = {
     ".atom",
@@ -69,6 +76,9 @@ def get_settings(instance) -> dict[str, bool | pathlib.Path | set[str]]:
         "PRECOMPRESS_BROTLI": instance.settings.get("PRECOMPRESS_BROTLI", bool(brotli)),
         "PRECOMPRESS_GZIP": instance.settings.get("PRECOMPRESS_GZIP", True),
         "PRECOMPRESS_ZOPFLI": instance.settings.get("PRECOMPRESS_ZOPFLI", bool(zopfli)),
+        "PRECOMPRESS_ZSTANDARD": instance.settings.get(
+            "PRECOMPRESS_ZSTANDARD", bool(pyzstd)
+        ),
         "PRECOMPRESS_OVERWRITE": instance.settings.get("PRECOMPRESS_OVERWRITE", False),
         "PRECOMPRESS_MIN_SIZE": instance.settings.get("PRECOMPRESS_MIN_SIZE", 20),
         "PRECOMPRESS_TEXT_EXTENSIONS": set(
@@ -92,10 +102,17 @@ def get_settings(instance) -> dict[str, bool | pathlib.Path | set[str]]:
     if settings["PRECOMPRESS_ZOPFLI"]:
         settings["PRECOMPRESS_GZIP"] = False
 
-    # '.br' and '.gz' are excluded extensions.
-    excluded_extensions = {".br", ".gz"} & settings["PRECOMPRESS_TEXT_EXTENSIONS"]
+    # If zstandard is enabled, it must be installed.
+    if settings["PRECOMPRESS_ZSTANDARD"] and not pyzstd:
+        log.error("Disabling zstandard pre-compression because it is not installed.")
+        settings["PRECOMPRESS_ZSTANDARD"] = False
+
+    # '.br', '.gz', and '.zst' are excluded extensions.
+    excluded_extensions = {".br", ".gz", ".zst"} & settings[
+        "PRECOMPRESS_TEXT_EXTENSIONS"
+    ]
     if excluded_extensions:
-        log.warning("gzip and brotli file extensions are excluded.")
+        log.warning("brotli, gzip, and zstandard file extensions are excluded.")
     for extension in excluded_extensions:
         log.warning(
             f'Removing "{extension}" from the set of text file extensions to pre-compress.'
@@ -138,6 +155,10 @@ def compress_files(instance):
     if settings["PRECOMPRESS_ZOPFLI"]:
         enabled_formats.append(
             ("zopfli", ".gz", compress_with_zopfli, decompress_with_gzip),
+        )
+    if settings["PRECOMPRESS_ZSTANDARD"]:
+        enabled_formats.append(
+            ("zstandard", ".zst", compress_with_zstandard, decompress_with_zstandard),
         )
 
     # Exit quickly if no algorithms are enabled.
@@ -245,6 +266,22 @@ def compress_with_zopfli(data: bytes) -> bytes:
     """Compress binary data using zopfli compression."""
 
     return zopfli.gzip.compress(data)
+
+
+def decompress_with_zstandard(path: pathlib.Path) -> bytes | None:
+    """Decompress a file using zstandard decompression."""
+
+    try:
+        return pyzstd.decompress(path.read_bytes())
+    except pyzstd.ZstdError:
+        return None
+
+
+@validate_file_sizes
+def compress_with_zstandard(data: bytes) -> bytes:
+    """Compress binary data using zstandard compression."""
+
+    return pyzstd.compress(data)
 
 
 def register():
