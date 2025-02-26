@@ -1,6 +1,6 @@
 [project]
 name = "pelican_precompress"
-version = "2.2.0"
+version = "2.3.0"
 description = "Pre-compress your Pelican site using gzip, brotli, zstandard, and zopfli!"
 authors = [
     { name = "Kurt McKee", email = "contactme@kurtmckee.org" },
