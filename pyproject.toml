@@ -93,7 +93,7 @@ filterwarnings = [
 # -----
 
 [tool.scriv]
-version = "literal: pyproject.toml: tool.poetry.version"
+version = "literal: pyproject.toml: project.version"
 categories = [
     "Breaking changes",
     "Python support",
