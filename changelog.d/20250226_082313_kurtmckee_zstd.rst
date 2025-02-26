@@ -1,0 +1,7 @@
+Added
+-----
+
+*   Add package extras to select compression algorithms.
+
+    The extras are named after each compression algorithm:
+    ``brotli``, ``zstandard``, and ``zopfli``.

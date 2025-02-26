@@ -32,37 +32,38 @@ At minimum, you'll need to install the pelican_precompress plugin.
 It will automatically generate gzip files because gzip is built into the
 Python standard library.
 
-However, if you want highly-optimized gzip files you'll need the zopfli module.
-And if you want to have the very best compression currently available,
-you'll need to install the brotli and/or pyzstd modules (which will require extra work in step 3).
+However, if you want better compression you'll need to install additional packages.
+pelican_precompress exposes each compression algorithm by name as a package extra:
+
+*   ``brotli``
+*   ``zopfli``
+*   ``zstandard``
+
+These can be selected as a comma-separated list during install:
 
 ..  code-block:: shell-session
 
-    $ pip install pelican_precompress
-    $ pip install zopfli  # This produces smaller gzip'd files. Use it!
-    $ pip install brotli  # This requires extra work in step 3.
-    $ pip install pyzstd  # This requires extra work in step 3.
+    $ pip install pelican_precompress[zstandard]
+    $ pip install pelican_precompress[zstandard,brotli,zopfli]
 
-Further reading: `zopfli`_, `brotli`_
+Further reading: `brotli package`_, `pyzstd package`_, `zopfli package`_
 
 
 2. Configure Pelican
 --------------------
 
-If you're using Pelican 4.5 or higher then you might not need to configure anything.
 pelican_precompress supports Pelican's namespace plugin architecture
 and will be automatically detected and loaded when Pelican runs.
 
-However, if you're maintaining a list of plugins for Pelican to use (even in Pelican 4.5)
-then you'll need to add it to the list of active plugins.
+However, if you're maintaining a list of plugins for Pelican to use
+then you'll need to add pelican_precompress to the list of active plugins.
 
 Feel free to copy and paste the code below into your Pelican configuration file.
 Just uncomment and edit the configuration lines to your liking...or leave
 them alone because the defaults are awesome!
 
-..  code-block:: python3
+..  code-block:: python
 
-    # Pelican 4.5 introduced automatic plugin discovery and loading.
     # You only need to add pelican_precompress to your PLUGINS list
     # if your configuration file already has a PLUGINS list!
     #
@@ -216,8 +217,9 @@ Further reading: `poetry`_, `tox`_, `venv`_, `pytest`_, `pyfakefs`_, `coverage`_
 
 ..  _Pelican: https://getpelican.com/
 ..  _Pelican plugins: https://docs.getpelican.com/en/latest/plugins.html
-..  _zopfli: https://pypi.org/project/zopfli/
-..  _brotli: https://pypi.org/project/Brotli/
+..  _brotli package: https://pypi.org/project/Brotli/
+..  _pyzstd package: https://pypi.org/project/pyzstd/
+..  _zopfli package: https://pypi.org/project/zopfli/
 ..  _gzip_static: https://nginx.org/en/docs/http/ngx_http_gzip_static_module.html#gzip_static
 ..  _gzip_vary: https://nginx.org/en/docs/http/ngx_http_gzip_module.html#gzip_vary
 ..  _nginx brotli module: https://github.com/google/ngx_brotli

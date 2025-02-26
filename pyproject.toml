@@ -27,6 +27,11 @@ dependencies = [
     "pelican-granular-signals >=1.0.0,<2.0.0",
 ]
 
+[project.optional-dependencies]
+brotli = ["brotli"]
+zopfli = ["zopfli"]
+zstandard = ["pyzstd"]
+
 [project.urls]
 Source = "https://github.com/kurtmckee/pelican-precompress"
 Changelog = "https://github.com/kurtmckee/pelican-precompress/blob/main/CHANGELOG.rst"
