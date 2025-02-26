@@ -258,6 +258,7 @@ def test_compress_files_never_overwrite(fs, multiprocessing):
         "PRECOMPRESS_BROTLI": False,
         "PRECOMPRESS_GZIP": True,
         "PRECOMPRESS_ZOPFLI": False,
+        "PRECOMPRESS_ZSTANDARD": False,
     }
     with patch("pelican.plugins.precompress.log", Mock()) as log:
         pp.compress_files(instance)
@@ -279,6 +280,7 @@ def test_compress_files_skip_existing_matching_files(fs, multiprocessing):
         "PRECOMPRESS_BROTLI": False,
         "PRECOMPRESS_GZIP": True,
         "PRECOMPRESS_ZOPFLI": False,
+        "PRECOMPRESS_ZSTANDARD": False,
         "PRECOMPRESS_OVERWRITE": True,
     }
     with patch("pelican.plugins.precompress.log", Mock()) as log:
@@ -302,6 +304,7 @@ def test_compress_files_overwrite_br(fs, multiprocessing):
         "PRECOMPRESS_BROTLI": True,
         "PRECOMPRESS_GZIP": False,
         "PRECOMPRESS_ZOPFLI": False,
+        "PRECOMPRESS_ZSTANDARD": False,
     }
     with patch("pelican.plugins.precompress.log", Mock()) as log:
         pp.compress_files(instance)
@@ -322,6 +325,7 @@ def test_compress_files_overwrite_gz(fs, multiprocessing):
         "PRECOMPRESS_BROTLI": False,
         "PRECOMPRESS_GZIP": True,
         "PRECOMPRESS_ZOPFLI": False,
+        "PRECOMPRESS_ZSTANDARD": False,
     }
     with patch("pelican.plugins.precompress.log", Mock()) as log:
         pp.compress_files(instance)
