@@ -29,15 +29,16 @@ There are three steps required to start using static compression:
 -----------------------------
 
 At minimum, you'll need to install the pelican_precompress plugin.
-It will automatically generate gzip files because gzip is built into the
-Python standard library.
+It will automatically generate gzip files on all versions of Python,
+and zstandard files on Python 3.14 and higher,
+because those compression algorithms are built into the Python standard library.
 
 However, if you want better compression you'll need to install additional packages.
 pelican_precompress exposes each compression algorithm by name as a package extra:
 
 *   ``brotli``
 *   ``zopfli``
-*   ``zstandard``
+*   ``zstandard`` (for Python 3.13 and lower)
 
 These can be selected as a comma-separated list during install:
 
@@ -138,11 +139,12 @@ You set them in your Pelican configuration file.
     If you set this to ``True`` when the brotli module isn't installed
     then nothing will happen.
 
-*   ``PRECOMPRESS_ZSTANDARD`` (bool, default is True if pyzstd is installed)
+*   ``PRECOMPRESS_ZSTANDARD`` (bool, default is True if zstandard is available)
 
-    If the pyzstd module is installed this will default to ``True``.
+    When running on Python 3.14 or higher with zstandard support compiled in,
+    or if the pyzstd module is installed, this will default to ``True``.
     You might set this to ``False`` during development.
-    If you set this to ``True`` when the pyzstd module isn't installed
+    If you set this to ``True`` when the zstandard compression isn't available
     then nothing will happen.
 
 *   ``PRECOMPRESS_ZOPFLI`` (bool, default is True if zopfli is installed)

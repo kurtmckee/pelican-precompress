@@ -58,7 +58,7 @@ def multiprocessing():
             },
         ),
         (
-            {"pyzstd"},
+            {"compression.zstd"},
             {
                 "PRECOMPRESS_GZIP": True,
                 "PRECOMPRESS_BROTLI": False,
@@ -67,7 +67,7 @@ def multiprocessing():
             },
         ),
         (
-            {"brotli", "zopfli", "pyzstd"},
+            {"brotli", "zopfli", "compression.zstd"},
             {
                 "PRECOMPRESS_GZIP": False,
                 "PRECOMPRESS_BROTLI": True,
@@ -83,7 +83,7 @@ def test_get_settings_compression_support(installed_modules, expected_settings):
 
     patches = [
         patch(f"pelican.plugins.precompress.{module}", module in installed_modules)
-        for module in {"brotli", "zopfli", "pyzstd"}
+        for module in {"brotli", "zopfli", "compression.zstd"}
     ]
     [patch_.start() for patch_ in patches]
 
@@ -111,7 +111,7 @@ def test_get_settings_compression_validation():
     patches = [
         patch("pelican.plugins.precompress.brotli", None),
         patch("pelican.plugins.precompress.zopfli", None),
-        patch("pelican.plugins.precompress.pyzstd", None),
+        patch("pelican.plugins.precompress.compression.zstd", None),
         patch("pelican.plugins.precompress.log", log),
     ]
     [patch_.start() for patch_ in patches]
@@ -192,14 +192,14 @@ def test_compress_with_gzip_exception():
         pp.compress_with_gzip(b"")
 
 
+@pytest.mark.skipif(pp.compression.zstd is None, reason="zstandard is unavailable")
 def test_compress_with_zstandard():
-    zstandard = pytest.importorskip("pyzstd")
     data = b"a" * 100
-    assert zstandard.decompress(pp.compress_with_zstandard(data)) == data
+    assert pp.compression.zstd.decompress(pp.compress_with_zstandard(data)) == data
 
 
+@pytest.mark.skipif(pp.compression.zstd is None, reason="zstandard is unavailable")
 def test_compress_with_zstandard_error():
-    pytest.importorskip("pyzstd")
     with pytest.raises(pp.FileSizeIncrease):
         pp.compress_with_zstandard(b"")
 
@@ -334,8 +334,8 @@ def test_compress_files_overwrite_gz(fs, multiprocessing):
         assert gzip.decompress(file.read()) == b"a" * 100
 
 
+@pytest.mark.skipif(pp.compression.zstd is None, reason="zstandard is unavailable")
 def test_compress_files_overwrite_zst(fs, multiprocessing):
-    zstandard = pytest.importorskip("pyzstd")
     with open("/test.txt", "wb") as file:
         file.write(b"a" * 100)
     with open("/test.txt.zst", "wb") as file:
@@ -353,7 +353,7 @@ def test_compress_files_overwrite_zst(fs, multiprocessing):
         pp.compress_files(instance)
     log.warning.assert_called_once()
     with pathlib.Path("/test.txt.zst").open("rb") as file:
-        assert zstandard.decompress(file.read()) == b"a" * 100
+        assert pp.compression.zstd.decompress(file.read()) == b"a" * 100
 
 
 def test_compress_files_file_size_increase(fs, multiprocessing):
@@ -421,10 +421,10 @@ def test_compress_files_overwrite_erase_existing_file(fs, multiprocessing):
     assert not pathlib.Path("/test.txt.gz").exists()
 
 
+@pytest.mark.skipif(pp.compression.zstd is None, reason="zstandard is unavailable")
 def test_compress_files_success_all_algorithms(fs, multiprocessing):
     pytest.importorskip("brotli")
     pytest.importorskip("zopfli")
-    pytest.importorskip("pyzstd")
     with open("/test.txt", "wb") as file:
         file.write(b"a" * 100)
     instance = Mock()
