@@ -30,7 +30,7 @@ dependencies = [
 [project.optional-dependencies]
 brotli = ["brotli"]
 zopfli = ["zopfli"]
-zstandard = ["pyzstd"]
+zstandard = ["pyzstd; python_version<'3.14'"]
 
 [project.urls]
 Source = "https://github.com/kurtmckee/pelican-precompress"
