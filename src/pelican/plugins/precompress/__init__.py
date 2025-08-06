@@ -109,7 +109,7 @@ def get_settings(instance) -> dict[str, bool | pathlib.Path | set[str]]:
         log.warning("brotli, gzip, and zstandard file extensions are excluded.")
     for extension in excluded_extensions:
         log.warning(
-            f'Removing "{extension}" from the set of text file extensions to pre-compress.'
+            f'Removing "{extension}" from the set of file extensions to pre-compress.'
         )
         settings["PRECOMPRESS_TEXT_EXTENSIONS"].remove(extension)
 
@@ -123,7 +123,7 @@ def get_settings(instance) -> dict[str, bool | pathlib.Path | set[str]]:
         log.warning("File extensions must start with a period.")
     for extension in invalid_extensions:
         log.warning(
-            f'Removing "{extension}" from the set of text file extensions to pre-compress.'
+            f'Removing "{extension}" from the set of file extensions to pre-compress.'
         )
         settings["PRECOMPRESS_TEXT_EXTENSIONS"].remove(extension)
 
