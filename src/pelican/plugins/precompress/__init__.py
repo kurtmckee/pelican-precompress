@@ -5,7 +5,6 @@
 from __future__ import annotations
 
 import functools
-import gzip
 import logging
 import multiprocessing
 import pathlib
@@ -14,6 +13,8 @@ from collections.abc import Iterable
 
 import blinker
 import pelican.plugins.granular_signals
+
+from .compat import compression
 
 log = logging.getLogger(__name__)
 
@@ -29,15 +30,8 @@ try:
     import zopfli.gzip
 except ModuleNotFoundError:
     log.debug("zopfli is not installed.")
-    log.debug("Note: pelican_precompress only targets zopfli, not zopflipy.")
+    log.debug("Note: pelican-precompress only targets zopfli, not zopflipy.")
     zopfli = None
-
-# zstandard support is optional.
-try:
-    import pyzstd
-except ModuleNotFoundError:
-    log.debug("pyzstd is not installed.")
-    pyzstd = None
 
 
 DEFAULT_TEXT_EXTENSIONS: set[str] = {
@@ -77,7 +71,7 @@ def get_settings(instance) -> dict[str, bool | pathlib.Path | set[str]]:
         "PRECOMPRESS_GZIP": instance.settings.get("PRECOMPRESS_GZIP", True),
         "PRECOMPRESS_ZOPFLI": instance.settings.get("PRECOMPRESS_ZOPFLI", bool(zopfli)),
         "PRECOMPRESS_ZSTANDARD": instance.settings.get(
-            "PRECOMPRESS_ZSTANDARD", bool(pyzstd)
+            "PRECOMPRESS_ZSTANDARD", bool(compression.zstd)
         ),
         "PRECOMPRESS_OVERWRITE": instance.settings.get("PRECOMPRESS_OVERWRITE", False),
         "PRECOMPRESS_MIN_SIZE": instance.settings.get("PRECOMPRESS_MIN_SIZE", 20),
@@ -103,7 +97,7 @@ def get_settings(instance) -> dict[str, bool | pathlib.Path | set[str]]:
         settings["PRECOMPRESS_GZIP"] = False
 
     # If zstandard is enabled, it must be installed.
-    if settings["PRECOMPRESS_ZSTANDARD"] and not pyzstd:
+    if settings["PRECOMPRESS_ZSTANDARD"] and not compression.zstd:
         log.error("Disabling zstandard pre-compression because it is not installed.")
         settings["PRECOMPRESS_ZSTANDARD"] = False
 
@@ -115,7 +109,7 @@ def get_settings(instance) -> dict[str, bool | pathlib.Path | set[str]]:
         log.warning("brotli, gzip, and zstandard file extensions are excluded.")
     for extension in excluded_extensions:
         log.warning(
-            f'Removing "{extension}" from the set of text file extensions to pre-compress.'
+            f'Removing "{extension}" from the set of file extensions to pre-compress.'
         )
         settings["PRECOMPRESS_TEXT_EXTENSIONS"].remove(extension)
 
@@ -129,7 +123,7 @@ def get_settings(instance) -> dict[str, bool | pathlib.Path | set[str]]:
         log.warning("File extensions must start with a period.")
     for extension in invalid_extensions:
         log.warning(
-            f'Removing "{extension}" from the set of text file extensions to pre-compress.'
+            f'Removing "{extension}" from the set of file extensions to pre-compress.'
         )
         settings["PRECOMPRESS_TEXT_EXTENSIONS"].remove(extension)
 
@@ -248,7 +242,7 @@ def decompress_with_gzip(path: pathlib.Path) -> bytes | None:
     """Decompress a file using gzip decompression."""
 
     try:
-        return gzip.decompress(path.read_bytes())
+        return compression.gzip.decompress(path.read_bytes())
     except OSError:
         return None
 
@@ -257,7 +251,7 @@ def decompress_with_gzip(path: pathlib.Path) -> bytes | None:
 def compress_with_gzip(data: bytes) -> bytes:
     """Compress binary data using gzip compression."""
 
-    compressor = zlib.compressobj(level=9, wbits=16 + zlib.MAX_WBITS)
+    compressor = compression.zlib.compressobj(level=9, wbits=16 + zlib.MAX_WBITS)
     return compressor.compress(data) + compressor.flush()
 
 
@@ -272,8 +266,8 @@ def decompress_with_zstandard(path: pathlib.Path) -> bytes | None:
     """Decompress a file using zstandard decompression."""
 
     try:
-        return pyzstd.decompress(path.read_bytes())
-    except pyzstd.ZstdError:
+        return compression.zstd.decompress(path.read_bytes())
+    except compression.zstd.ZstdError:
         return None
 
 
@@ -281,7 +275,7 @@ def decompress_with_zstandard(path: pathlib.Path) -> bytes | None:
 def compress_with_zstandard(data: bytes) -> bytes:
     """Compress binary data using zstandard compression."""
 
-    return pyzstd.compress(data)
+    return compression.zstd.compress(data)
 
 
 def register():
