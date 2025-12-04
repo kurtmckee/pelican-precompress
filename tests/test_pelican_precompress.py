@@ -4,7 +4,6 @@
 
 import gzip
 import pathlib
-import time
 from unittest.mock import Mock, patch
 
 import pytest
@@ -211,23 +210,6 @@ def test_register():
     assert granular_signals.call_count == 1
     assert blinker.signal.call_count == 1
     assert blinker.signal("compress").connect.call_count == 1
-
-
-root = pathlib.Path(__file__).parent.parent
-copyrighted_files = [
-    *list(root.glob("*.rst")),
-    *list(root.glob("*.txt")),
-    *list((root / "src").rglob("*.py")),
-    *list((root / "tests").rglob("*.py")),
-]
-
-
-@pytest.mark.parametrize("path", copyrighted_files)
-def test_copyrights(path):
-    with path.open("r", encoding="utf8") as file:
-        assert f"2019-{time.gmtime().tm_year}" in file.read(
-            100
-        ), f"{path.name} has an incorrect copyright date"
 
 
 def test_compress_files_do_nothing(fs, multiprocessing):

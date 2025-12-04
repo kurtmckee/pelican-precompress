@@ -21,12 +21,12 @@ except ModuleNotFoundError:
 
     # zstandard support is optional.
     try:
-        import pyzstd
+        import backports.zstd as zstd
     except ModuleNotFoundError:
-        log.debug("pyzstd is not installed.")
-        pyzstd = None
+        log.debug("backports.zstd is not installed.")
+        zstd = None
 
     compression = types.SimpleNamespace()
     compression.gzip = gzip
     compression.zlib = zlib
-    compression.zstd = pyzstd
+    compression.zstd = zstd

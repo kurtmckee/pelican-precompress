@@ -1,6 +1,7 @@
-..  This file is part of the pelican_precompress plugin.
-..  Copyright 2019-2025 Kurt McKee <contactme@kurtmckee.org>
-..  Released under the MIT license.
+..
+    This file is part of the pelican-precompress plugin.
+    Copyright 2019-2025 Kurt McKee <contactme@kurtmckee.org>
+    Released under the MIT license.
 
 Changelog
 *********
@@ -85,11 +86,11 @@ Breaking changes
     Pelican 4.5 introduced a namespace plugin architecture
     which allows automatic plugin detection and loading.
 
-    pelican_precompress 2.0.0 supports this new architecture,
+    pelican-precompress 2.0.0 supports this new architecture,
     but this change requires existing users to modify the
     ``PLUGINS`` list in the Pelican configuration file.
 
-    pelican_precompress can be referenced and enabled with the name
+    pelican-precompress can be referenced and enabled with the name
     ``'pelican.plugins.precompress'`` in the ``PLUGINS`` list.
 
 Development

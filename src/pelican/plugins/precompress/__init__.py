@@ -30,7 +30,7 @@ try:
     import zopfli.gzip
 except ModuleNotFoundError:
     log.debug("zopfli is not installed.")
-    log.debug("Note: pelican_precompress only targets zopfli, not zopflipy.")
+    log.debug("Note: pelican-precompress only targets zopfli, not zopflipy.")
     zopfli = None
 
 

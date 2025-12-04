@@ -1,8 +1,9 @@
-..  This file is part of the pelican_precompress plugin.
-..  Copyright 2019-2025 Kurt McKee <contactme@kurtmckee.org>
-..  Released under the MIT license.
+..
+    This file is part of the pelican-precompress plugin.
+    Copyright 2019-2025 Kurt McKee <contactme@kurtmckee.org>
+    Released under the MIT license.
 
-pelican_precompress
+pelican-precompress
 *******************
 
 *Pre-compress your Pelican site using gzip, brotli, zstandard, and zopfli!*
@@ -11,7 +12,7 @@ pelican_precompress
 
 Are you using `Pelican`_, the static site generator? If so, great!
 Are you pre-compressing your static files to have the fastest site possible?
-If not, install **pelican_precompress** today!
+If not, install **pelican-precompress** today!
 It's the plugin that makes your visitors happy and saves you money!
 
 
@@ -21,20 +22,20 @@ Installation
 There are three steps required to start using static compression:
 
 #.  Install the plugin and any supporting Python packages you want.
-#.  Configure Pelican to use the pelican_precompress plugin.
+#.  Configure Pelican to use the pelican-precompress plugin.
 #.  Configure your web server to use static, pre-compressed files.
 
 
 1. Install the Python modules
 -----------------------------
 
-At minimum, you'll need to install the pelican_precompress plugin.
+At minimum, you'll need to install the pelican-precompress plugin.
 It will automatically generate gzip files on all versions of Python,
 and zstandard files on Python 3.14 and higher,
 because those compression algorithms are built into the Python standard library.
 
 However, if you want better compression you'll need to install additional packages.
-pelican_precompress exposes each compression algorithm by name as a package extra:
+pelican-precompress exposes each compression algorithm by name as a package extra:
 
 *   ``brotli``
 *   ``zopfli``
@@ -44,20 +45,20 @@ These can be selected as a comma-separated list during install:
 
 ..  code-block:: shell-session
 
-    $ pip install pelican_precompress[zstandard]
-    $ pip install pelican_precompress[zstandard,brotli,zopfli]
+    $ pip install pelican-precompress[zstandard]
+    $ pip install pelican-precompress[zstandard,brotli,zopfli]
 
-Further reading: `brotli package`_, `pyzstd package`_, `zopfli package`_
+Further reading: `brotli package`_, `backports.zstd package`_, `zopfli package`_
 
 
 2. Configure Pelican
 --------------------
 
-pelican_precompress supports Pelican's namespace plugin architecture
+pelican-precompress supports Pelican's namespace plugin architecture
 and will be automatically detected and loaded when Pelican runs.
 
 However, if you're maintaining a list of plugins for Pelican to use
-then you'll need to add pelican_precompress to the list of active plugins.
+then you'll need to add pelican-precompress to the list of active plugins.
 
 Feel free to copy and paste the code below into your Pelican configuration file.
 Just uncomment and edit the configuration lines to your liking...or leave
@@ -65,7 +66,7 @@ them alone because the defaults are awesome!
 
 ..  code-block:: python
 
-    # You only need to add pelican_precompress to your PLUGINS list
+    # You only need to add pelican-precompress to your PLUGINS list
     # if your configuration file already has a PLUGINS list!
     #
     # PLUGINS = ['pelican.plugins.precompress']
@@ -156,7 +157,7 @@ You set them in your Pelican configuration file.
 
 *   ``PRECOMPRESS_OVERWRITE`` (bool, default is False)
 
-    When pelican_precompress encounters an existing compressed file
+    When pelican-precompress encounters an existing compressed file
     it will refuse to overwrite it. If you want the plugin to overwrite
     files you can set this to ``True``.
 
@@ -208,7 +209,7 @@ test suite to have parametrized tests; pyfakefs creates a fake
 filesystem that the tests safely create and erase files in;
 and coverage keeps track of which lines of code have been run.
 
-**pelican_precompress** has 100% test coverage, but there may still be bugs.
+**pelican-precompress** has 100% test coverage, but there may still be bugs.
 Please report any issues that you encounter.
 
 Further reading: `poetry`_, `tox`_, `venv`_, `pytest`_, `pyfakefs`_, `coverage`_
@@ -220,7 +221,7 @@ Further reading: `poetry`_, `tox`_, `venv`_, `pytest`_, `pyfakefs`_, `coverage`_
 ..  _Pelican: https://getpelican.com/
 ..  _Pelican plugins: https://docs.getpelican.com/en/latest/plugins.html
 ..  _brotli package: https://pypi.org/project/Brotli/
-..  _pyzstd package: https://pypi.org/project/pyzstd/
+..  _backports.zstd package: https://pypi.org/project/backports.zstd/
 ..  _zopfli package: https://pypi.org/project/zopfli/
 ..  _gzip_static: https://nginx.org/en/docs/http/ngx_http_gzip_static_module.html#gzip_static
 ..  _gzip_vary: https://nginx.org/en/docs/http/ngx_http_gzip_module.html#gzip_vary
