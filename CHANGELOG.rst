@@ -16,6 +16,36 @@ Please see the fragment files in the `changelog.d directory`_.
 
 ..  scriv-insert-here
 
+.. _changelog-2.4.0:
+
+2.4.0 - 2025-12-04
+==================
+
+Python support
+--------------
+
+*   Support Python 3.14.
+*   Drop Python 3.9 support.
+
+Changed
+-------
+
+*   Normalize the package name everywhere to ``pelican-precompress``.
+*   zstandard support now uses ``compression.zstd`` on Python 3.14 and higher.
+
+    This means that zstandard is now enabled by default on Python 3.14 and higher.
+
+    ``backports.zstd``, not ``pyzstd``, is now used for Python 3.13 and lower,
+    and is automatically installed by the ``zstandard`` extra.
+
+Development
+-----------
+
+*   Migrate the flake8 configuration to ``pyproject.toml`` using
+    the `flake8-toml-config <https://github.com/kurtmckee/flake8-toml-config>`__ plugin.
+*   Test building the package using the minimum build-backend version.
+*   Use `chipshot <https://github.com/kurtmckee/chipshot/>`__ to standardize headers.
+
 .. _changelog-2.3.0:
 
 2.3.0 - 2025-02-26
