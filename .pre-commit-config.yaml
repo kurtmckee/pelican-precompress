@@ -24,20 +24,20 @@ repos:
       - id: "trailing-whitespace"
 
   - repo: "https://github.com/asottile/pyupgrade"
-    rev: "v3.20.0"
+    rev: "v3.21.2"
     hooks:
       - id: "pyupgrade"
-        name: "Enforce Python 3.9+ idioms"
+        name: "Enforce Python 3.10+ idioms"
         args:
-          - "--py39-plus"
+          - "--py310-plus"
 
   - repo: "https://github.com/psf/black-pre-commit-mirror"
-    rev: "25.9.0"
+    rev: "25.11.0"
     hooks:
       - id: "black"
 
   - repo: "https://github.com/pycqa/isort"
-    rev: "6.1.0"
+    rev: "7.0.0"
     hooks:
       - id: "isort"
 
@@ -47,9 +47,9 @@ repos:
       - id: "flake8"
         additional_dependencies:
           - "flake8-toml-config==1.0.0"
-          - "flake8-bugbear==24.12.12"
+          - "flake8-bugbear==25.11.29"
 
   - repo: "https://github.com/editorconfig-checker/editorconfig-checker"
-    rev: "v3.4.0"
+    rev: "v3.6.0"
     hooks:
       - id: "editorconfig-checker"

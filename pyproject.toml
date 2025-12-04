@@ -1,5 +1,5 @@
 [project]
-name = "pelican_precompress"
+name = "pelican-precompress"
 version = "2.3.0"
 description = "Pre-compress your Pelican site using gzip, brotli, zstandard, and zopfli!"
 authors = [
@@ -22,7 +22,7 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 dependencies = [
     "pelican-granular-signals >=1.0.0,<2.0.0",
 ]
@@ -30,11 +30,13 @@ dependencies = [
 [project.optional-dependencies]
 brotli = ["brotli"]
 zopfli = ["zopfli"]
-zstandard = ["pyzstd; python_version<'3.14'"]
+zstandard = ["backports.zstd; python_version<'3.14'"]
 
 [project.urls]
 Source = "https://github.com/kurtmckee/pelican-precompress"
 Changelog = "https://github.com/kurtmckee/pelican-precompress/blob/main/CHANGELOG.rst"
+"Donate via GitHub" = "https://github.com/sponsors/kurtmckee"
+"Donate via Ko-Fi" = "https://ko-fi.com/kurtmckee"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
@@ -48,6 +50,17 @@ build-backend = "poetry.core.masonry.api"
 packages = [
     { include = "pelican", from = "src" }
 ]
+
+
+# chipshot
+# --------
+
+[tool.chipshot]
+template = """
+This file is part of the pelican-precompress plugin.
+Copyright 2019-{{ year }} Kurt McKee <contactme@kurtmckee.org>
+Released under the MIT license.
+"""
 
 
 # coverage
@@ -91,8 +104,10 @@ profile = "black"
 # pytest
 # ------
 
-[tool.pytest.ini_options]
-addopts = "--color=yes"
+[tool.pytest]
+addopts = [
+    "--color=yes",
+]
 filterwarnings = [
     "error",
 ]
